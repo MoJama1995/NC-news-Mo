@@ -1,10 +1,32 @@
-// const {  } = require('../data');
+const {
+  articlesData,
+  commmentsData,
+  topicsData,
+  usersData
+} = require("../data/dev-data/index");
+
+const { getNewArticles } = require("../../utils/seedUtils.js");
 
 exports.seed = (knex, Promise) => {
   return knex.migrate
     .rollback()
     .then(() => knex.migrate.latest())
     .then(() => {
-      // insert data
+      return knex("topics")
+        .insert(topicsData)
+        .into("topics")
+        .returning("*");
+    })
+    .then(() => {
+      return knex("users")
+        .insert(usersData)
+        .returning("*");
+    })
+    .then(() => {
+      const updatedArticles = getNewArticles(articlesData);
+      return knex("articles")
+        .insert(updatedArticles)
+        .into("articles")
+        .returning();
     });
 };
