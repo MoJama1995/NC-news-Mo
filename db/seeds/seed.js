@@ -5,7 +5,11 @@ const {
   usersData
 } = require("../data/dev-data/index");
 
-const { getNewArticles } = require("../../utils/seedUtils.js");
+const {
+  getNewArticles,
+  updateComments,
+  createArticleRef
+} = require("../../utils/seedUtils.js");
 
 exports.seed = (knex, Promise) => {
   return knex.migrate
@@ -27,6 +31,15 @@ exports.seed = (knex, Promise) => {
       return knex("articles")
         .insert(updatedArticles)
         .into("articles")
-        .returning();
+        .returning("*");
+    })
+    .then(articles => {
+      const articleRef = createArticleRef(articles);
+      const updatedComments = updateComments(commmentsData, articleRef);
+      console.log(updatedComments);
+      return knex("comments")
+        .insert(updatedComments)
+        .into("comments")
+        .returning("*");
     });
 };

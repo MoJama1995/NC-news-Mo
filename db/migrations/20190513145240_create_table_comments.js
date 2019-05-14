@@ -3,7 +3,8 @@ exports.up = function(knex, Promise) {
   return knex.schema.createTable("comments", commentsTable => {
     commentsTable.increments("comments_id").primary();
     commentsTable.string("author");
-    commentsTable.integer("article_id").references("articles");
+    commentsTable.text("body");
+    commentsTable.integer("article_id").references("articles;");
     commentsTable.integer("votes").defaultTo(0);
     commentsTable.string("created_at").defaultTo(now);
   });
