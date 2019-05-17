@@ -36,7 +36,6 @@ exports.seed = (knex, Promise) => {
     .then(articles => {
       const articleRef = createArticleRef(articles);
       const updatedComments = updateComments(commmentsData, articleRef);
-      console.log(updatedComments);
       return knex("comments")
         .insert(updatedComments)
         .into("comments")

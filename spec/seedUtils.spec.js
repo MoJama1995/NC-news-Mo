@@ -2,7 +2,7 @@ const { expect } = require("chai");
 const {
   getNewArticles,
   createArticleRef,
-  updateArticleFunction
+  updateComments
 } = require("../utils/seedUtils");
 
 describe("getNewArticles", () => {
@@ -41,7 +41,7 @@ describe("createArticleRef", () => {
   });
 });
 
-describe.only("updateArticleFunction", () => {
+describe("updateComments", () => {
   it("returns an object with article ID instead of belongs_to", () => {
     const lookupObj = { "Running a Node App": 1 };
     const arr = [
@@ -64,6 +64,6 @@ describe.only("updateArticleFunction", () => {
         created_at: 1471522072389
       }
     ];
-    expect(updateArticleFunction(arr, lookupObj)).to.eql(expected);
+    expect(updateComments(arr, lookupObj)).to.eql(expected);
   });
 });
