@@ -10,7 +10,7 @@ const connection = require("../db/connection");
 
 chai.use(chaiSorted);
 
-describe("/api", () => {
+describe.only("/api", () => {
   beforeEach(() => connection.seed.run());
   after(() => connection.destroy());
 
@@ -20,12 +20,12 @@ describe("/api", () => {
         .get("/api/topics")
         .expect(200)
         .then(({ body }) => {
-          expect(body.topics).to.haveOwnProperty("slug");
+          expect(body.topics[0]).to.haveOwnProperty("slug");
         });
     });
   });
   describe("/articles", () => {
-    it("GET status: 200 and has all properties as stated in the read me", () => {
+    it("GET status: 200, it GETS all articles and has all properties as stated in the read me", () => {
       return request(app)
         .get("/api/articles")
         .expect(200)
@@ -38,6 +38,14 @@ describe("/api", () => {
           expect(body.articles[0]).to.haveOwnProperty("created_at");
           expect(body.articles[0]).to.haveOwnProperty("votes");
           expect(body.articles[0]).to.haveOwnProperty("comment_count");
+        });
+    });
+    it("GET status: 200, it gets a single article and has all properties as stated in the read me", () => {
+      return request(app)
+        .get("/api/articles/1")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.article.topic).to.eql("coding");
         });
     });
     it("GET request : 200 and filters for authorname", () => {
@@ -56,13 +64,21 @@ describe("/api", () => {
           expect(body.articles[0].topic).to.eql("football");
         });
     });
+    it("GET request : 200 and sorts by articles by author ", () => {
+      return request(app)
+        .get("/api/articles?order=asc")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.articles[0].author).to.eql("cooljmessy");
+        });
+    });
     it("GET Request : 200 and returns article based on articleID", () => {
       return request(app)
         .get("/api/articles/22")
         .expect(200)
         .then(({ body }) => {
-          expect(body.articles[0].topic).to.eql("football");
-          expect(body.articles[0].created_at).to.eql(
+          expect(body.article.topic).to.eql("football");
+          expect(body.article.created_at).to.eql(
             "2017-01-26T05:58:25.946+00:00"
           );
         });
@@ -70,11 +86,11 @@ describe("/api", () => {
     it("PATCH status: 200 responds with an updated vote count", () => {
       return request(app)
         .patch("/api/articles/22")
-        .send({ votes: 1 })
+        .send({ inc_votes: 1 })
         .expect(200)
         .then(({ body }) => {
-          expect(body[0].article_id).to.eql(22);
-          expect(body[0].votes).to.eql(1);
+          expect(body.articles[0].article_id).to.eql(22);
+          expect(body.articles[0].votes).to.eql(1);
         });
     });
     it("GET status : 200 and responds with all of the comments belonging to an article", () => {
@@ -82,16 +98,14 @@ describe("/api", () => {
         .get("/api/articles/17/comments")
         .expect(200)
         .then(({ body }) => {
-          expect(body.length).to.eql(12);
+          expect(body.comments.length).to.eql(12);
         });
     });
-    it("Post status : 201 and responds with an added new comment", () => {
+    it("POST status : 201 and responds with an added new comment", () => {
       return request(app)
         .post("/api/articles/17/comments")
         .send({
-          author: "tickle122",
-          article_id: 17,
-          votes: 10,
+          username: "tickle122",
           body: "lol"
         })
         .expect(201)
@@ -109,8 +123,8 @@ describe("/api", () => {
         .send({ votes: 1 })
         .expect(200)
         .then(({ body }) => {
-          expect(body[0].comments_id).to.eql(18);
-          expect(body[0].votes).to.eql(7);
+          expect(body.comment[0].comments_id).to.eql(18);
+          expect(body.comment[0].votes).to.eql(7);
         });
     });
     it("Delete status:204 and has removed comments", () => {
@@ -160,7 +174,7 @@ describe("/api", () => {
           expect(res.body.msg).to.equal("Comment not found");
         });
     });
-    it("Articles POST status: 405 - resondsp with invalid HTTP request", () => {
+    it("Articles POST status: 405 - responds with invalid HTTP request", () => {
       return request(app)
         .post("/api/articles/17/")
         .send({
@@ -182,6 +196,20 @@ describe("/api", () => {
         .expect(422)
         .then(res => {
           expect(res.body.msg).to.eql("user does not exist");
+        });
+    });
+  });
+  describe("topic errors", () => {
+    it("topics PATCH status: 405 responds with error message when HTTP method is not allowed", () => {
+      return request(app)
+        .patch("/api/topics")
+        .send({
+          slug: "footie",
+          description: " none whatsoever"
+        })
+        .expect(405)
+        .then(res => {
+          expect(res.body.msg).to.eql("Method Not Allowed");
         });
     });
   });

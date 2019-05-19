@@ -1,6 +1,6 @@
 const connection = require("../db/connection");
 
-const selectArticles = ({ sort_by, order, author, topic }) => {
+const selectArticles = ({ sort_by, order, author, topic, title }) => {
   return connection
     .select(
       "articles.author",
@@ -18,8 +18,9 @@ const selectArticles = ({ sort_by, order, author, topic }) => {
     .orderBy(sort_by || "created_at", order || "desc")
     .returning("*")
     .modify(query => {
-      if (author) query.where("articles.author", author);
-      if (topic) query.where("articles.topic", topic);
+      if (author) query.where("articles.author", "=", author);
+      if (topic) query.where("articles.topic", "=", topic);
+      if (title) query.where("articles.title", "=", title);
     });
 };
 
@@ -32,10 +33,10 @@ const selectArticlesById = article_id => {
     .returning("*");
 };
 
-const updateArticle = (article_id, { votes }) => {
+const updateArticle = ({ article_id, inc_votes }) => {
   return connection("articles")
     .where("article_id", "=", article_id)
-    .increment({ votes })
+    .increment("votes", inc_votes)
     .returning("*");
 };
 
@@ -46,10 +47,10 @@ const selectCommentsByArticleID = (article_id, { sort_by, order }) => {
     .returning("*");
 };
 
-const insertComments = (comments, { article_id }) => {
-  console.log(comments);
+const insertComments = ({ username, body, article_id }) => {
   return connection("comments")
-    .insert(comments)
+    .where("comments.article_id", "=", article_id)
+    .insert(comment)
     .returning("*");
 };
 

@@ -21,7 +21,6 @@ exports.methodNotAllowed = (req, res) => {
 };
 
 exports.handle422 = (err, req, res, next) => {
-  console.log(err);
   const codes = {
     "23503": "user does not exist"
   };

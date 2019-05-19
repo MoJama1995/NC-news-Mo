@@ -4,8 +4,12 @@ const {
   patchCommentsByID,
   deleteCommentsByID
 } = require("../controllers/commentsController");
+const { methodNotAllowed } = require("../errors/index");
 
-commentsRouter.patch("/:comment_id", patchCommentsByID);
-commentsRouter.delete("/:comment_id", deleteCommentsByID);
+commentsRouter
+  .route("/:comment_id")
+  .patch(patchCommentsByID)
+  .delete(deleteCommentsByID)
+  .all(methodNotAllowed);
 
 module.exports = commentsRouter;
