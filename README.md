@@ -1,4 +1,4 @@
-# NcNewsMo
+# NcNews
 
 ## Available Scripts
 
