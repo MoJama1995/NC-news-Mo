@@ -1,5 +1,5 @@
 exports.up = function(knex, Promise) {
-  const now = Date.now;
+  const now = Date.now();
   return knex.schema.createTable("comments", commentsTable => {
     commentsTable.increments("comments_id").primary();
     commentsTable.string("author").references("users.username");

@@ -45,15 +45,15 @@ describe.only("/api", () => {
         .get("/api/articles/1")
         .expect(200)
         .then(({ body }) => {
-          expect(body.article.topic).to.eql("coding");
+          expect(body.article.topic).to.eql("mitch");
         });
     });
     it("GET request : 200 and filters for authorname", () => {
       return request(app)
-        .get("/api/articles?author=jessjelly")
+        .get("/api/articles?author=butterbridge")
         .expect(200)
         .then(({ body }) => {
-          expect(body.articles[0].author).to.eql("jessjelly");
+          expect(body.articles[0].author).to.eql("butterbridge");
         });
     });
     it("GET request : 200 and filters for topics", () => {
@@ -69,6 +69,7 @@ describe.only("/api", () => {
         .get("/api/articles?order=asc")
         .expect(200)
         .then(({ body }) => {
+          console.log(body);
           expect(body.articles[0].author).to.eql("cooljmessy");
         });
     });
@@ -110,21 +111,20 @@ describe.only("/api", () => {
         })
         .expect(201)
         .then(({ body }) => {
-          expect(body.length).to.eql(1);
-          expect(body[0]).to.haveOwnProperty("author");
-          expect(body[0]).to.haveOwnProperty("created_at");
+          expect(body.comment[0]).to.haveOwnProperty("author");
+          expect(body.comment[0]).to.haveOwnProperty("created_at");
         });
     });
   });
   describe("/comments", () => {
     it("Patch status:200 and has an updated comment votes", () => {
       return request(app)
-        .patch("/api/comments/18")
-        .send({ votes: 1 })
+        .patch("/api/comments/22")
+        .send({ inc_votes: 1 })
         .expect(200)
         .then(({ body }) => {
-          expect(body.comment[0].comments_id).to.eql(18);
-          expect(body.comment[0].votes).to.eql(7);
+          expect(body.comments[0].comments_id).to.eql(22);
+          expect(body.comments[0].votes).to.eql(2);
         });
     });
     it("Delete status:204 and has removed comments", () => {
@@ -197,6 +197,21 @@ describe.only("/api", () => {
         .then(res => {
           expect(res.body.msg).to.eql("user does not exist");
         });
+    });
+    it("ARTICLES get: returns a 404 if the topic does not exist", () => {
+      return request(app)
+        .get(`/api/articles?topic=not-a-topic`)
+        .expect(404);
+    });
+    it("ARTICLES get: returns a 404 if the author does not exist", () => {
+      return request(app)
+        .get(`/api/articles?author=not-an-author`)
+        .expect(404);
+    });
+    it("ARTICLES get: returns a 404 if the column does not exist", () => {
+      return request(app)
+        .get(`/api/articles?sort_by=not-a-column`)
+        .expect(404);
     });
   });
   describe("topic errors", () => {

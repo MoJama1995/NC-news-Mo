@@ -47,9 +47,8 @@ const selectCommentsByArticleID = (article_id, { sort_by, order }) => {
     .returning("*");
 };
 
-const insertComments = ({ username, body, article_id }) => {
+const insertComments = comment => {
   return connection("comments")
-    .where("comments.article_id", "=", article_id)
     .insert(comment)
     .returning("*");
 };

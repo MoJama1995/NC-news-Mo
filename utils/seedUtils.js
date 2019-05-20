@@ -1,5 +1,3 @@
-const { articlesData } = require("../db/data/dev-data/index");
-
 exports.getNewArticles = data => {
   return data.map(item => {
     let dateStr = new Date(item.created_at);

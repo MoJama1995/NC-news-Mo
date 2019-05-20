@@ -3,7 +3,7 @@ const {
   commmentsData,
   topicsData,
   usersData
-} = require("../data/dev-data/index");
+} = require("../data");
 
 const {
   getNewArticles,

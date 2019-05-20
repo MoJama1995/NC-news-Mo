@@ -7,10 +7,10 @@ const {
 } = require("../models/articlesModel");
 
 const getArticles = (req, res, next) => {
-  const { author } = req.query;
   selectArticles(req.query)
     .then(articles => {
-      res.status(200).send({ articles });
+      if (articles.length === 0) return Promise.reject({ status: 404 });
+      else res.status(200).send({ articles });
     })
     .catch(next);
 };
@@ -44,18 +44,16 @@ const getCommentsByArticleID = (req, res, next) => {
 };
 
 const postCommentsByArticleID = (req, res, next) => {
-  const { username, body, article_id } = req.body;
+  const { username, body } = req.body;
+  const { article_id } = req.params;
   const commentToAdd = {
-    author: username,
-    body: body,
-    article_id: article_id
+    author: req.body.username,
+    body: req.body.body,
+    article_id: req.params.article_id
   };
-  insertComments(commentToAdd, req.body)
-    .then(comments => {
-      console.log(comments);
-      if (typeof comments.body !== "string")
-        return Promise.reject({ status: 422 });
-      else res.status(201).send({ comments: comment });
+  insertComments(commentToAdd)
+    .then(comment => {
+      res.status(201).send({ comment: comment });
     })
     .catch(next);
 };
