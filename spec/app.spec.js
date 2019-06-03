@@ -38,6 +38,7 @@ describe.only("/api", () => {
           expect(body.articles[0]).to.haveOwnProperty("created_at");
           expect(body.articles[0]).to.haveOwnProperty("votes");
           expect(body.articles[0]).to.haveOwnProperty("comment_count");
+          console.log(body.articles[0]);
         });
     });
     it("GET status: 200, it gets a single article and has all properties as stated in the read me", () => {
@@ -50,18 +51,18 @@ describe.only("/api", () => {
     });
     it("GET request : 200 and filters for authorname", () => {
       return request(app)
-        .get("/api/articles?author=butterbridge")
+        .get("/api/articles?author=butter_bridge")
         .expect(200)
         .then(({ body }) => {
-          expect(body.articles[0].author).to.eql("butterbridge");
+          expect(body.articles[0].author).to.eql("butter_bridge");
         });
     });
     it("GET request : 200 and filters for topics", () => {
       return request(app)
-        .get("/api/articles?topic=football")
+        .get("/api/articles?topic=mitch")
         .expect(200)
         .then(({ body }) => {
-          expect(body.articles[0].topic).to.eql("football");
+          expect(body.articles[0].topic).to.eql("mitch");
         });
     });
     it("GET request : 200 and sorts by articles by author ", () => {
@@ -69,28 +70,28 @@ describe.only("/api", () => {
         .get("/api/articles?order=asc")
         .expect(200)
         .then(({ body }) => {
-          console.log(body);
-          expect(body.articles[0].author).to.eql("cooljmessy");
+          expect(body.articles[0].author).to.eql("butter_bridge");
         });
     });
-    it("GET Request : 200 and returns article based on articleID", () => {
+    it.only("GET Request : 200 and returns article based on articleID", () => {
       return request(app)
-        .get("/api/articles/22")
+        .get("/api/articles/12")
         .expect(200)
         .then(({ body }) => {
-          expect(body.article.topic).to.eql("football");
+          expect(body.article.topic).to.eql("mitch");
           expect(body.article.created_at).to.eql(
-            "2017-01-26T05:58:25.946+00:00"
+            "1974-11-26T12:21:54.171+00:00"
           );
+          expect(body.article.comment_count).to.eql("0");
         });
     });
     it("PATCH status: 200 responds with an updated vote count", () => {
       return request(app)
-        .patch("/api/articles/22")
+        .patch("/api/articles/12")
         .send({ inc_votes: 1 })
         .expect(200)
         .then(({ body }) => {
-          expect(body.articles[0].article_id).to.eql(22);
+          expect(body.articles[0].article_id).to.eql(12);
           expect(body.articles[0].votes).to.eql(1);
         });
     });
@@ -99,14 +100,14 @@ describe.only("/api", () => {
         .get("/api/articles/17/comments")
         .expect(200)
         .then(({ body }) => {
-          expect(body.comments.length).to.eql(12);
+          expect(body.comments.length).to.eql(0);
         });
     });
     it("POST status : 201 and responds with an added new comment", () => {
       return request(app)
-        .post("/api/articles/17/comments")
+        .post("/api/articles/11/comments")
         .send({
-          username: "tickle122",
+          username: "rogersop",
           body: "lol"
         })
         .expect(201)
@@ -119,12 +120,12 @@ describe.only("/api", () => {
   describe("/comments", () => {
     it("Patch status:200 and has an updated comment votes", () => {
       return request(app)
-        .patch("/api/comments/22")
+        .patch("/api/comments/12")
         .send({ inc_votes: 1 })
         .expect(200)
         .then(({ body }) => {
-          expect(body.comments[0].comments_id).to.eql(22);
-          expect(body.comments[0].votes).to.eql(2);
+          expect(body.comments[0].comments_id).to.eql(12);
+          expect(body.comments[0].votes).to.eql(0);
         });
     });
     it("Delete status:204 and has removed comments", () => {
@@ -136,14 +137,14 @@ describe.only("/api", () => {
   describe("/users", () => {
     it("Get Status : 200 and returns a user and username", () => {
       return request(app)
-        .get("/api/users/tickle122")
+        .get("/api/users/rogersop")
         .expect(200)
         .then(({ body }) => {
-          expect(body[0].username).to.eql("tickle122");
+          expect(body[0].username).to.eql("rogersop");
           expect(body[0].avatar_url).to.eql(
-            "https://www.spiritsurfers.net/monastery/wp-content/uploads/_41500270_mrtickle.jpg"
+            "https://avatars2.githubusercontent.com/u/24394918?s=400&v=4"
           );
-          expect(body[0].name).to.eql("Tom Tickle");
+          expect(body[0].name).to.eql("paul");
         });
     });
   });
@@ -208,10 +209,21 @@ describe.only("/api", () => {
         .get(`/api/articles?author=not-an-author`)
         .expect(404);
     });
-    it("ARTICLES get: returns a 404 if the column does not exist", () => {
+    it("ARTICLES get: returns a 400 if the column does not exist", () => {
       return request(app)
         .get(`/api/articles?sort_by=not-a-column`)
-        .expect(404);
+        .expect(400)
+        .then(res => {
+          expect(res.body.msg).to.eql("column does not exist");
+        });
+    });
+    it("ARTICLES get: returns a 400 if the column does not exist", () => {
+      return request(app)
+        .get(`/api/articles?sort_by=not-a-column`)
+        .expect(400)
+        .then(res => {
+          expect(res.body.msg).to.eql("column does not exist");
+        });
     });
   });
   describe("topic errors", () => {

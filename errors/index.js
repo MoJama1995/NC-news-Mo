@@ -1,13 +1,18 @@
 exports.handle400 = (err, req, res, next) => {
+  console.log(err);
   // err = {err: '404: etc'}
   const codes = {
-    "22P02": "invalid input, integers expected"
+    "22P02": "invalid input, integers expected",
+    "42703": "column does not exist"
   };
   if (codes[err.code]) res.status(400).send({ msg: codes[err.code] });
   else next(err);
 };
 
 exports.handle404 = (err, req, res, next) => {
+  const codes = {
+    "42703": "sort column does not exist"
+  };
   if (err.status === 404) res.status(404).send({ msg: err.msg || "Not found" });
   else next(err);
 };
@@ -29,5 +34,5 @@ exports.handle422 = (err, req, res, next) => {
 };
 
 exports.handle500 = (err, req, res, next) => {
-  res.status(500).send({ msg: "Internal Server Error hihi" });
+  res.status(500).send({ msg: "Internal Server Error " });
 };

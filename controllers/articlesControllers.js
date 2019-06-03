@@ -22,7 +22,9 @@ const getArticlesByID = (req, res, next) => {
       if (articles.length === 0) return Promise.reject({ status: 404 });
       else res.status(200).send({ article: articles[0] });
     })
-    .catch(next);
+    .catch(err => {
+      console.log(err);
+    });
 };
 
 const patchArticlesByID = (req, res, next) => {

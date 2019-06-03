@@ -26,9 +26,11 @@ const selectArticles = ({ sort_by, order, author, topic, title }) => {
 
 const selectArticlesById = article_id => {
   return connection
-    .select("*")
+    .select("articles.*")
+    .count("comments.article_id as comment_count")
     .from("articles")
-    .where("article_id", "=", article_id)
+    .leftJoin("comments", "comments.article_id", "=", "articles.article_id")
+    .where("articles.article_id", "=", article_id)
     .groupBy("articles.article_id")
     .returning("*");
 };
