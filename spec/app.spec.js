@@ -73,7 +73,7 @@ describe.only("/api", () => {
           expect(body.articles[0].author).to.eql("butter_bridge");
         });
     });
-    it.only("GET Request : 200 and returns article based on articleID", () => {
+    it("GET Request : 200 and returns article based on articleID", () => {
       return request(app)
         .get("/api/articles/12")
         .expect(200)
