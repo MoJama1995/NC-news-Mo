@@ -38,7 +38,6 @@ describe.only("/api", () => {
           expect(body.articles[0]).to.haveOwnProperty("created_at");
           expect(body.articles[0]).to.haveOwnProperty("votes");
           expect(body.articles[0]).to.haveOwnProperty("comment_count");
-          console.log(body.articles[0]);
         });
     });
     it("GET status: 200, it gets a single article and has all properties as stated in the read me", () => {
@@ -85,7 +84,7 @@ describe.only("/api", () => {
           expect(body.article.comment_count).to.eql("0");
         });
     });
-    it("PATCH status: 200 responds with an updated vote count", () => {
+    it.only("PATCH status: 200 responds with an updated vote count", () => {
       return request(app)
         .patch("/api/articles/12")
         .send({ inc_votes: 1 })
