@@ -1,7 +1,9 @@
 const { updateComments, deleteComments } = require("../models/commentModels");
 
 const patchCommentsByID = (req, res, next) => {
-  updateComments(req.params, req.body)
+  const { article_id } = req.params;
+  const { inc_votes } = req.body;
+  updateComments(article_id, inc_votes)
     .then(comments => {
       if (comments.length === 0)
         return Promise.reject({ status: 404, msg: "Comment not found" });
