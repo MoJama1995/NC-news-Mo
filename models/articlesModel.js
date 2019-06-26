@@ -35,7 +35,7 @@ const selectArticlesById = article_id => {
     .returning("*");
 };
 
-const updateArticle = ({ article_id }, { inc_votes }) => {
+const updateArticle = (article_id, inc_votes) => {
   console.log(article_id);
   return connection("articles")
     .where("article_id", "=", article_id)

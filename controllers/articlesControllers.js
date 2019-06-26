@@ -32,7 +32,9 @@ const patchArticlesByID = (req, res, next) => {
     .then(articles => {
       res.status(200).send({ articles });
     })
-    .catch(next);
+    .catch(err => {
+      console.log(err);
+    });
 };
 
 const getCommentsByArticleID = (req, res, next) => {
@@ -52,6 +54,7 @@ const postCommentsByArticleID = (req, res, next) => {
     body: req.body.body,
     article_id: req.params.article_id
   };
+
   insertComments(commentToAdd)
     .then(comment => {
       res.status(201).send({ comment: comment });

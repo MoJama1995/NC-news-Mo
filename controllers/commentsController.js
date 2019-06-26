@@ -3,11 +3,12 @@ const { updateComments, deleteComments } = require("../models/commentModels");
 const patchCommentsByID = (req, res, next) => {
   const { comment_id } = req.params;
   const { inc_votes } = req.body;
+
   updateComments(comment_id, inc_votes)
     .then(comments => {
       if (comments.length === 0)
         return Promise.reject({ status: 404, msg: "Comment not found" });
-      else res.status(200).send({ comments });
+      else res.status(200).send({ comments: comments });
     })
     .catch(next);
 };
