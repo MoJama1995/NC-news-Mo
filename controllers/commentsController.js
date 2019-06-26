@@ -7,7 +7,7 @@ const patchCommentsByID = (req, res, next) => {
     .then(comments => {
       if (comments.length === 0)
         return Promise.reject({ status: 404, msg: "Comment not found" });
-      else res.status(200).send({ comments: comments });
+      else res.status(200).send({ comments });
     })
     .catch(next);
 };
