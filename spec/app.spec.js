@@ -84,7 +84,7 @@ describe.only("/api", () => {
           expect(body.article.comment_count).to.eql("0");
         });
     });
-    it.only("PATCH status: 200 responds with an updated vote count", () => {
+    it("PATCH status: 200 responds with an updated vote count", () => {
       return request(app)
         .patch("/api/articles/12")
         .send({ inc_votes: 1 })
@@ -113,6 +113,22 @@ describe.only("/api", () => {
         .then(({ body }) => {
           expect(body.comment[0]).to.haveOwnProperty("author");
           expect(body.comment[0]).to.haveOwnProperty("created_at");
+        });
+    });
+    it.only("POST status : 201 and responds with an added new article", () => {
+      return request(app)
+        .post("/api/articles/")
+        .send({
+          title: "why is Mo this dope?",
+          body:
+            " Mo is the greatest man of all time, in any aspect of life he is simple the G.O.A.T",
+          topics: "mitch",
+          author: "rogersop"
+        })
+        .expect(201)
+        .then(({ body }) => {
+          expect(body.article).to.haveOwnProperty("author");
+          expect(body.article).to.haveOwnProperty("created_at");
         });
     });
   });

@@ -56,10 +56,17 @@ const insertComments = comment => {
     .returning("*");
 };
 
+const insertArticle = (title, body, topic, author) => {
+  return connection("articles")
+    .insert({ title, body, topic, author })
+    .returning("*");
+};
+
 module.exports = {
   selectArticles,
   selectArticlesById,
   updateArticle,
   selectCommentsByArticleID,
-  insertComments
+  insertComments,
+  insertArticle
 };
